@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Faker Source: libs/core/model/Model.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.united.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Faker</a>
+	</div>
+	<div class="navbar-collapse">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Faker.boot.boot.html">Faker.boot.boot</a></li><li><a href="Faker.core.model.Field.html">Faker.core.model.Field</a></li><li><a href="Faker.core.model.Model.html">Faker.core.model.Model</a></li><li><a href="Faker.core.store.Store.html">Faker.core.store.Store</a></li><li><a href="Faker.core.template.Template.html">Faker.core.template.Template</a></li><li><a href="Faker.router.api.html">Faker.router.api</a></li><li><a href="Faker.router.api.Resource.html">Faker.router.api.Resource</a></li><li><a href="Faker.router.api.UriParser.html">Faker.router.api.UriParser</a></li><li><a href="Faker.util.ModelFormatter.html">Faker.util.ModelFormatter</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+	</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+    		<h1 class="page-title">Source: libs/core/model/Model.js</h1>
+			
+
+		<h1 class="page-title">Source: libs/core/model/Model.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">var Template = require('../template/Template');
+//  ___     _
+// | __|_ _| |_____ _ _
+// | _/ _` | / / -_) '_|
+// |_|\__,_|_\_\___|_|  v0.1
+// -------------------------
+/**
+ * @author Juan Carlos Fernández &lt;fconde.j@gmail.com>
+ * @version 0.1
+ * @class Faker.core.model.Model
+ * @description Represents a model class, keeping all the class information. It can also instantiate objects (models)
+ * from that class, which will inherit this information.
+ * @param {Object} config An object containing a basic model definition.
+ */
+function Model(config){
+    var self = this,
+        allowedActions = ["GET", "POST", "PUT", "DELETE"];
+
+    if(config.instantiate &amp;&amp; config.fields){
+        self.fields = config.fields;
+        return true;
+    }
+
+    // In self.fields we will store the field definition for this model. These
+    // will be reused by all model instances.
+    self.fields = {};
+    // In self.fieldValues we will store the field values for this model. Unlike
+    // self.fields, this attribute is instance-specific.
+    self.fieldValues = {};
+
+    // We need a fields array.
+    if(!config.fields)
+        throw "FIELDS_NOT_DEFINED";
+
+    // With at least 1 element.
+    if(!config.fields.length)
+        throw "FIELDS_ERROR";
+
+    var Field = require('./Field');
+
+    config.fields.forEach(function(fieldInfo){
+        if(fieldInfo.type &amp;&amp; fieldInfo.name){
+            var field = new Field(fieldInfo);
+            self.fields[fieldInfo.name] = field;
+            self.fieldValues[fieldInfo.name] = null;
+        }else{
+            // type and name must always be present in a field definition.
+            throw "BAD_FIELD_DEFINITION";
+        }
+    });
+
+    // The allowed actions for which this model is available.
+    if(config.actions){
+        allowedActions = [];
+        config.actions.forEach(function(action){
+            if(typeof(action) !== "string")
+                return;
+
+            allowedActions.push(action.toUpperCase());
+        });
+    }
+
+    if(config.idParam){
+        self.idParam = config.idParam;
+    }
+
+    if(config.template){
+        try{
+            self.template = Template.loadFromFile([GLOBAL.config.path.templates, config.template + ".json"].join("/"));
+        }
+        catch(ex){
+            console.log("y");
+            self.template = new Template();
+        }
+    }else{
+        console.log("z");
+        self.template = new Template();
+    }
+
+    self.limitParam     = config.limitParam    || GLOBAL.config.defaults.params.limit;
+    self.startParam     = config.startParam    || GLOBAL.config.defaults.params.start;
+    self.pageParam      = config.pageParam     || GLOBAL.config.defaults.params.page;
+    self.sortersParam   = config.sortersParam  || GLOBAL.config.defaults.params.sorters;
+    self.allowedActions = allowedActions;
+};
+
+var methods = Model.prototype;
+
+/**
+ * @description Opens up the file in filePath for reading and parsing as JSON, then creates a model instance with
+ * that JSON object used as configuration.
+ * @memberof Faker.core.model.Model
+ * @param {String} filePath The path to the JSON file containing the model properties.
+ * @public
+ * @returns {Faker.core.model.Model} A model using the provided configuration.
+ */
+Model.loadFromFile = function(filePath) {
+    var fs = require('fs-extra'),
+        resourceFile,
+        resourceJSON;
+
+    try{
+        resourceFile = fs.readFileSync(filePath);
+        resourceJSON = JSON.parse(resourceFile);
+        return new Model(resourceJSON);
+    }
+    catch(Ex){
+        console.log(Ex);
+        return null;
+    }
+};
+
+/**
+ * @description Set function, proxy to the field's set function.
+ * @memberof Faker.core.model.Model
+ * @instance
+ * @param {String} field The name of the field.
+ * @param {Object} value The new value for this field.
+ * @returns {Boolean} True if the field was modified. False otherwise.
+ */
+methods.set = function(field, value) {
+    var self = this;
+    if(!self.fields[field])
+        return false;
+
+    return self.fields[field].set(value, self.fieldValues);
+};
+
+/**
+ * @description Updates all the fields with the values in fieldValues.
+ * @memberof Faker.core.model.Model
+ * @instance
+ * @param {Object} fieldValues A hash-table (object) with the values for the fields.
+ * @returns {Boolean} True if at least one field was modified.
+ */
+methods.update = function(fieldValues){
+    var self = this,
+        modified = false;
+
+    for(var field in self.fields){
+        if(fieldValues.hasOwnProperty(field)){
+            if(self.set(field, fieldValues[field]))
+                modified = true;
+        }
+    }
+    return modified;
+}
+
+/**
+ * @description Get the value of a field.
+ * @memberof Faker.core.model.Model
+ * @instance
+ * @param {String} field The name of the field.
+ * @returns {Object} The value of the field.
+ */
+methods.get = function(field) {
+    var self = this;
+    if(!self.fields[field])
+        return null;
+
+    return self.fields[field].get(self.fieldValues);
+};
+
+/**
+ * @description Instantiates a model of this same class, keeping a reference to this model's fields, but using
+ * its own field values.
+ * @param {Object} data The initial data for the fields.
+ * @returns {Faker.core.model.Model}
+ */
+methods.instantiate = function(data) {
+    var self = this,
+        modelInstance = new Model({fields: self.fields, instantiate: true});
+
+    modelInstance.fieldValues = {};
+
+    for(var property in data){
+        if(modelInstance.fields[property]){
+            modelInstance.fields[property].set(data[property], modelInstance.fieldValues);
+        }
+    }
+
+    return modelInstance;
+};
+
+module.exports = Model;</pre>
+	</article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	Faker doc - Generated with jsduck <br/> DocStrap Copyright 2012-2013 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+	<br />
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	on 1-6-Y 11:06 using the <a
+	href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "h1,h2,h3,h4",
+		showAndHide : false,
+		scrollTo    : "100px"
+	} );
+
+	$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+	//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			lang = "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+</body>
+</html>

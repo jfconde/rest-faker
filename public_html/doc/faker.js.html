@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Faker Source: faker.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.united.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Faker</a>
+	</div>
+	<div class="navbar-collapse">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Faker.boot.boot.html">Faker.boot.boot</a></li><li><a href="Faker.core.model.Field.html">Faker.core.model.Field</a></li><li><a href="Faker.core.model.Model.html">Faker.core.model.Model</a></li><li><a href="Faker.core.store.Store.html">Faker.core.store.Store</a></li><li><a href="Faker.core.template.Template.html">Faker.core.template.Template</a></li><li><a href="Faker.router.api.html">Faker.router.api</a></li><li><a href="Faker.router.api.Resource.html">Faker.router.api.Resource</a></li><li><a href="Faker.router.api.UriParser.html">Faker.router.api.UriParser</a></li><li><a href="Faker.util.ModelFormatter.html">Faker.util.ModelFormatter</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+	</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+    		<h1 class="page-title">Source: faker.js</h1>
+			
+
+		<h1 class="page-title">Source: faker.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">var express = require('express');
+var chalk = require('chalk');
+var bodyParser = require('body-parser');
+
+ //  ___     _
+ // | __|_ _| |_____ _ _
+ // | _/ _` | / / -_) '_|
+ // |_|\__,_|_\_\___|_|  v0.1
+ // -------------------------
+ /**
+  * Fake REST dev server
+  * @author Juan Carlos Fernández &lt;fconde.j@gmail.com>
+  * @version 0.1
+  * @fileOverview This is the entry point and main file for the initialization of
+  * the faker server. It launches the boot process and sets up the underlying
+  * express server.
+  * @augments express server
+  */
+var faker = express();
+
+/**
+ * @memberof faker
+ * @description Logs a message in yellow using the &lt;strong>chalk&lt;/strong> Node.js module.
+ * @param {String} msg the message to be printed.
+ */
+var pLog = function(msg){
+    console.log(chalk.white(msg));
+}
+
+ /**
+  * @description Initialization function, main for running the faker/expres server.
+  * @memberof faker
+  */
+faker.init = function(){
+    // Read configuration files and set up all the necessary stuff.
+    pLog("----------------------------------------------------------------");
+    pLog("FAKER");
+    pLog("----------------------------------------------------------------");
+    pLog("Boot routines starting...");
+    var boot = require('./libs/boot/Boot');
+    // Inspect the boot result.
+    pLog("Boot routines finished. Status: " + (boot ? chalk.green("OK") : chalk.red("ERROR")));
+    pLog("Version: " + chalk.cyan(GLOBAL.getVersion()));
+    pLog("----------------------------------------------------------------");
+
+    faker.use(bodyParser.json());           // to support JSON-encoded bodies
+    faker.use(bodyParser.urlencoded({       // to support URL-encoded bodies
+        extended: true
+    }));
+
+    // Bind the API router to our express server.
+    faker.bindApiRouter();
+    // Serve the configured static files.
+    faker.serveStaticFiles();
+    // Finally, start listening on the pre-configured port.
+    faker.listen(GLOBAL.config.port);
+    // Logging
+    pLog("Faker:          " + chalk.cyan(GLOBAL.appUrl));
+    pLog("API:            " + chalk.cyan(GLOBAL.apiUrl));
+    pLog("Web frontend:   " + chalk.cyan(GLOBAL.staticUrl));
+    pLog("----------------------------------------------------------------");
+};
+
+ /**
+  * @description Build an API router and then set it up to handle requests under the API mount point
+  * defined in &lt;strong>mountpoint.API&lt;/strong> in &lt;strong>config.json&lt;/strong>.
+  */
+faker.bindApiRouter = function(){
+    var self = this;
+    // Require the API router.
+    var apiRouter = require('./libs/router/Api');
+    // Use this router to handle API requests.
+    self.use(GLOBAL.config.mountpoint.API, apiRouter);
+};
+
+ /**
+  * @description Set up static files served under the mount point defined in &lt;strong>mountpoint.static&lt;/strong> in
+  * &lt;strong>config.json&lt;/strong>.
+  */
+faker.serveStaticFiles = function(){
+    var self = this;
+    self.use(GLOBAL.config.mountpoint.static, express.static (GLOBAL.config.path.static));
+};
+
+// Here we go!
+faker.init();</pre>
+	</article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	Faker doc - Generated with jsduck <br/> DocStrap Copyright 2012-2013 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+	<br />
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	on 1-6-Y 11:06 using the <a
+	href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "h1,h2,h3,h4",
+		showAndHide : false,
+		scrollTo    : "100px"
+	} );
+
+	$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+	//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			lang = "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+</body>
+</html>

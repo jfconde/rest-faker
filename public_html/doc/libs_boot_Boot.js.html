@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Faker Source: libs/boot/Boot.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.united.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Faker</a>
+	</div>
+	<div class="navbar-collapse">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Faker.boot.boot.html">Faker.boot.boot</a></li><li><a href="Faker.core.model.Field.html">Faker.core.model.Field</a></li><li><a href="Faker.core.model.Model.html">Faker.core.model.Model</a></li><li><a href="Faker.core.store.Store.html">Faker.core.store.Store</a></li><li><a href="Faker.core.template.Template.html">Faker.core.template.Template</a></li><li><a href="Faker.router.api.html">Faker.router.api</a></li><li><a href="Faker.router.api.Resource.html">Faker.router.api.Resource</a></li><li><a href="Faker.router.api.UriParser.html">Faker.router.api.UriParser</a></li><li><a href="Faker.util.ModelFormatter.html">Faker.util.ModelFormatter</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+	</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+    		<h1 class="page-title">Source: libs/boot/Boot.js</h1>
+			
+
+		<h1 class="page-title">Source: libs/boot/Boot.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">//  ___     _
+// | __|_ _| |_____ _ _
+// | _/ _` | / / -_) '_|
+// |_|\__,_|_\_\___|_|  v0.1
+// -------------------------
+
+// Require Node modules
+var fs = require('fs');                 // Filesystem
+var dateFormat = require('dateformat'); // Date Formatting
+var chalk = require('chalk');           // Console color formatting
+
+/**
+ * @class Faker.boot.boot
+ * @author Juan Carlos Fernández &lt;fconde.j@gmail.com>
+ * @description Boot module, in charge of parsing the configuration file/s and set up
+ * necessary resources (like variables or static functions) to be used by the application.
+ * @returns {boolean} True if the boot process exited normally.
+ */
+var boot = function(){
+    readConfigurationFile('./config.json');
+    initGlobalConfig();
+    return true;
+};
+
+/**
+ * @memberof Boot.boot
+ * @description Reads the specified configuration file (as JSON) and use the resulting
+ * object as &lt;strong>GLOBAL.config&lt;/strong>.
+ * @param Path to the JSON file to be parsed.
+ */
+var readConfigurationFile = function(path){
+    GLOBAL.config = JSON.parse(fs.readFileSync(path));
+};
+
+/**
+ * @memberof Boot.boot
+ * @description Sets up static variables and methods for latter use.
+ */
+var initGlobalConfig = function() {
+    // Current faker version
+    GLOBAL.version = { major: 0, minor: 1, build: 0};
+    GLOBAL.getVersion = function() { return [GLOBAL.version.major, GLOBAL.version.minor, GLOBAL.version.build].join("."); };
+    // The address in which we will listen.
+    GLOBAL.appUrl = "localhost:" + GLOBAL.config.port;
+    // The mount point (path) in which the app will serve static files.
+    GLOBAL.staticUrl = [appUrl, GLOBAL.config.mountpoint.static].join("");
+    // The mount point (path) in which the API URIs will be accessible.
+    GLOBAL.apiUrl = [appUrl, GLOBAL.config.mountpoint.API].join("");
+
+    // Used throughout the application to write out dates in a "more human" format.
+    GLOBAL.dateFormat = function(date){
+    	return dateFormat(date, GLOBAL.config.dateFormat);
+    };
+
+    // Logs application information.
+    GLOBAL.logInfo = function(message){
+    	var dateStr = GLOBAL.dateFormat(new Date()),
+    		formatedMessage = '';
+
+    	formatedMessage += chalk.blue('[i]' + ' [' + dateStr + '] ') + message;
+    	console.log(formatedMessage);
+    };
+
+    // Logs a warning.
+    GLOBAL.logWarning = function(message){
+    	var dateStr = GLOBAL.dateFormat(new Date()),
+    		formatedMessage = '';
+
+    	formatedMessage += chalk.yellow('[!]' + ' [' + dateStr + '] ') + message;
+    	console.log(formatedMessage);
+    };
+
+    // Logs an error.
+    GLOBAL.logError = function(message){
+    	var dateStr = GLOBAL.dateFormat(new Date()),
+    		formatedMessage = '';
+
+    	formatedMessage += chalk.red('[E]' + ' [' + dateStr + '] ') + message;
+    	console.log(formatedMessage);
+    };
+
+    // Logs a successful operation.
+    GLOBAL.logSuccess = function(message){
+        var dateStr = GLOBAL.dateFormat(new Date()),
+            formatedMessage = '';
+
+        formatedMessage += chalk.green('[i]' + ' [' + dateStr + '] ') + message;
+        console.log(formatedMessage);
+    };
+
+    // Logs messages only when the application is running in debug mode, as specified
+    // in the &lt;strong>debug&lt;/strong> property of config.json.
+    GLOBAL.logDebug = function(message){
+    	if(!GLOBAL.config.debug)
+    		return;
+
+    	var dateStr = GLOBAL.dateFormat(new Date()),
+    		formatedMessage = '';
+
+    	formatedMessage += chalk.white.bgBlue('[DEBUG]' + ' [' + dateStr + '] ' + message);
+    	console.log(formatedMessage);
+    }
+};
+
+module.exports.boot = boot();</pre>
+	</article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	Faker doc - Generated with jsduck <br/> DocStrap Copyright 2012-2013 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+	<br />
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	on 1-6-Y 11:06 using the <a
+	href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "h1,h2,h3,h4",
+		showAndHide : false,
+		scrollTo    : "100px"
+	} );
+
+	$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+	//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			lang = "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "appName" : "FakerServer",
+  "port" : 3001,
+  "debug": false,
+
+  "path": {
+    "appServers" : "./example/servers",
+    "templates" : "./example/templates",
+    "static": "./public_html"
+  },
+
+  "mountpoint" : {
+    "static": "/pub",
+    "API": "/api"
+  },
+
+  "defaults" : {
+    "params": {
+      "limit": "limit",
+      "page": "page",
+      "start": "start",
+      "sorters": "sort"
+    },
+    "limit": 0
+
+  },
+
+  "dateFormat": "d-m-yyyy h:MM:ss"
+}

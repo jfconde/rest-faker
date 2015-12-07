@@ -1,0 +1,104 @@
+<head>
+    <title>Faker server</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-dark.min.css" />
+    <link rel="stylesheet" href="faker.css" />
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+    
+	<nav class="navbar navbar-default navbar-fixed-top">
+  		<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">RESTfaker</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="#server_info">Server Info & Version<span class="sr-only">(current)</span></a></li>
+	        <!-- <li><a href="#version">Version</a></li> -->
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+    <div class="container" id="server_info">
+        <h1><b>RESTFaker</b></h1>
+        <p>
+            <br/>
+            <h3>Your server is now running</h3>
+            <h5>
+                You can start developing your applications using RESTfaker as your mockup backend. GET, PUT, POST and DELETE
+                methods are supported.
+            </h5>
+
+            <br/>
+            <h3>Per-app server configuration</h3>
+            <h5>
+                Keep your mockup JSON database well organized. Define the model and controller configuration via JSON for
+                each app (and server) independently. The "servers" folder must contain a folder per app, each containing
+                controller/ and model/ folders.
+            </h5>
+        </p>
+    </div>
+
+    <div class="container" id="server_info">
+        <h3>About</h3>
+        <h5>
+            Faker (or REST Faker) is a Node.js tool that enables you to set up a mockup REST server to test against when developing
+            your apps by using simple JSON files. It currently supports GET, POST, PUT and DELETE requests as well as paginating and
+            sorting.
+
+            This app was originally developed to assist in the development and integration of ExtJS applications, augmenting
+            conventional mockups with enhaced capabilities which more closely resemble the behaviour of a backend system.
+        </h5>
+        <br/>
+    </div>
+
+    <div class="container" id="server_info">
+        <h3>Installation</h3>
+        <h4>Requirements</h4>
+
+        <ul>
+            <li>NodeJS (<a href="https://nodejs.org/en/" target="_blank">download</a>)</li>
+        </ul>
+
+        <h4>Setup</h4>
+
+        <ul>
+            <li>Clone this repository -
+                <a href="https://github.com/jfconde/faker.git" target="_blank">HTTPS</a>
+                <a href="git@github.com:jfconde/faker.git" target="_blank">SSH</a>
+                <a href="https://github.com/jfconde/faker" target="_blank">SVN</a>
+            </li>
+            <li>
+                Install package dependencies using <b>npm install</b>.
+            </li>
+            <li>
+                (Optional) Edit <b>config.json</b>, located in Faker's root folder.
+            </li>
+            <li>
+                (Optional) Take a look inside the <b>example/</b> folder to get the grasp of how to define your own resources and
+                templates.
+            </li>
+            <li>
+                Execute the comand <b>node faker</b> to start your faker server. Enjoy!
+            </li>
+        </ul>
+
+        <h4>Learn more</h4>
+        <h5>
+            See the rest of the Readme.md <a href="https://github.com/jfconde/faker/blob/master/Readme.md" target="_blank">here.</a>
+        </h5>
+    </div>
+
+
+</body>

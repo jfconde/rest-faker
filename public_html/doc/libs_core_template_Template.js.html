@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Faker Source: libs/core/template/Template.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.united.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Faker</a>
+	</div>
+	<div class="navbar-collapse">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Faker.boot.boot.html">Faker.boot.boot</a></li><li><a href="Faker.core.model.Field.html">Faker.core.model.Field</a></li><li><a href="Faker.core.model.Model.html">Faker.core.model.Model</a></li><li><a href="Faker.core.store.Store.html">Faker.core.store.Store</a></li><li><a href="Faker.core.template.Template.html">Faker.core.template.Template</a></li><li><a href="Faker.router.api.html">Faker.router.api</a></li><li><a href="Faker.router.api.Resource.html">Faker.router.api.Resource</a></li><li><a href="Faker.router.api.UriParser.html">Faker.router.api.UriParser</a></li><li><a href="Faker.util.ModelFormatter.html">Faker.util.ModelFormatter</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+	</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+    		<h1 class="page-title">Source: libs/core/template/Template.js</h1>
+			
+
+		<h1 class="page-title">Source: libs/core/template/Template.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">//  ___     _
+// | __|_ _| |_____ _ _
+// | _/ _` | / / -_) '_|
+// |_|\__,_|_\_\___|_|  v0.1
+// -------------------------
+/**
+ * @author Juan Carlos Fernández &lt;fconde.j@gmail.com>
+ * @version 0.1
+ * @class Faker.core.template.Template
+ * @description Template class, used to format all API responses using an specific layout. The following keywords
+ * can be used in the JSON template as property values and they will then be replaced by their values:
+ * - {data} : the data returned after processing the request.
+ * - {info} : in case something went wrong, a message containing information about what happened.
+ * - {success} : a boolean indicating whether processing the request went fine or not.
+ * - {total} : the number of items returned.
+ */
+function Template(templateObject) {
+    var self = this;
+    self.totalPath = null;
+    self.dataPath = null;
+    self.infoPath  = null;
+    self.successPath = null;
+
+    self.parse(templateObject);
+}
+
+var methods = Template.prototype;
+
+/**
+ * @description Instantiates a Template loading a JSON definition from a local file.
+ * @memberof Faker.core.template.Template
+ * @param {String} filePath the path of the file containing the template definition in JSON format.
+ * @returns {Template} A Template object working with the loaded JSON object.
+ */
+Template.loadFromFile = function(filePath) {
+    var fs = require('fs-extra'),
+        templateFile,
+        templateJSON;
+
+    try{
+        templateFile = fs.readFileSync(filePath);
+        templateJSON = JSON.parse(templateFile);
+        return new Template(templateJSON);
+    }
+    catch(Ex){
+        console.log(Ex);
+        return null;
+    }
+};
+
+/**
+ * @description Reads a JS object and tries to find the path to the properties which will be placeholders for
+ * template values.
+ * @memberof Faker.core.template.Template
+ * @instance
+ * @param {Object} templateObj the object representation of the template.
+ */
+methods.parse = function(templateObj) {
+    var self = this;
+
+    if(!templateObj)
+        return;
+
+    self.templateObject = templateObj;
+
+    self.totalPath = Template.findPath("{count}", self.templateObject, null);
+    self.dataPath = Template.findPath("{data}", self.templateObject, null);
+    self.infoPath = Template.findPath("{info}", self.templateObject, null);
+    self.successPath = Template.findPath("{success}", self.templateObject, null);
+};
+
+/**
+ * @description Given an object, recursively examines it searching for a specific property value.
+ * @memberof Faker.core.template.Template
+ * @public
+ * @param {String}   target The value expression we are looking for.
+ * @param {Object}   curObj The current object we are examining.
+ * @param {String}   curPath The path used to get to the current JS object.
+ * @returns {String} Path to the found  property value.
+ */
+Template.findPath = function(target, curObj, curPath) {
+    var resultObj = null;
+
+    for(var property in curObj){
+        if(curObj[property] === target){
+            return (curPath !== null ? curPath + "." + property : property);
+        }else if(typeof(curObj[property]) === "object"){
+            resultObj = Template.findPath(target, curObj[property], (curPath !== null ? curPath + "." + property : property));
+
+            if(resultObj != null){
+                return resultObj;
+            }
+        }
+    }
+    return null;
+};
+
+/**
+ * @description Sets the value of the property specified by path in curObject. Using for placing final values in the
+ * object.
+ * @public
+ * @memberof Faker.core.template.Template
+ * @param {Object} curObj The object in which the value will be set.
+ * @param {String} path The path in object to reach the required property.
+ * @param {Object} value The value to assign to such property.
+ * @returns {boolean} True if the value could be set. False otherwise.
+ */
+Template.applyValue = function(curObj, path, value){
+    if(typeof(path) === "string")
+        path = path.split(".");
+
+    try{
+        for(var i = 0; i &lt; path.length; i++){
+            var curTarget = path[i];
+            if(i &lt; path.length-1){
+                curObj = curObj[curTarget];
+                continue;
+            }else{
+                curObj[curTarget] = value;
+                return true;
+            }
+        }
+    }
+    catch(Ex){
+        return false;
+    }
+
+    return false;
+}
+
+/**
+ * Generates an object in which, if present, the data, success, count and limit properties have been correctly set.
+ * @public
+ * @instance
+ * @memberof Faker.core.template.Template
+ * @param {Object} data Value for the data property.
+ * @param {Boolean} success Value for the success property.
+ * @param {count} Value of the count property
+ * @param {String} info Value of the info property.
+ * @returns {Object} An object in which the specified properties, if present, have been set.
+ */
+methods.export = function(data, success, count, info){
+    var self = this,
+        templateInstance;
+
+    if(!self.templateObject)
+        return data;
+
+    templateInstance = JSON.parse(JSON.stringify(self.templateObject));
+
+    if(self.dataPath)
+        Template.applyValue(templateInstance, self.dataPath, data);
+
+    if(self.totalPath)
+        Template.applyValue(templateInstance, self.totalPath, count);
+
+    if(self.infoPath)
+        Template.applyValue(templateInstance, self.infoPath, info);
+
+    if(self.successPath)
+        Template.applyValue(templateInstance, self.successPath, success);
+
+    return templateInstance;
+};
+
+module.exports = Template;</pre>
+	</article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	Faker doc - Generated with jsduck <br/> DocStrap Copyright 2012-2013 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+	<br />
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	on 1-6-Y 11:06 using the <a
+	href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "h1,h2,h3,h4",
+		showAndHide : false,
+		scrollTo    : "100px"
+	} );
+
+	$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+	//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			lang = "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+</body>
+</html>

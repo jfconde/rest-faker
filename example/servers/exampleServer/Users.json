@@ -1,0 +1,43 @@
+{
+  "useId": true,
+  "idParam": "id",
+  "template": null,
+  "actions": [
+    "POST",
+    "GET",
+    "PUT",
+    "DELETE"
+  ],
+  "limitParam": "limit",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "surname",
+      "type": "string"
+    },
+    {
+      "name": "age",
+      "type": "int"
+    },
+    {
+      "name": "email",
+      "type": "string"
+    }
+  ],
+  "data": [
+    {
+      "id": 1,
+      "name": "Test Model",
+      "surname": null,
+      "age": null,
+      "email": null
+    }
+  ]
+}
