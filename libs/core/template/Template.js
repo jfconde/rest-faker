@@ -1,9 +1,6 @@
-//  ___     _
-// | __|_ _| |_____ _ _
-// | _/ _` | / / -_) '_|
-// |_|\__,_|_\_\___|_|  v0.1
-// -------------------------
 /**
+ * Faker - libs/core/template/Template
+ *
  * @author Juan Carlos Fernández <fconde.j@gmail.com>
  * @version 0.1
  * @class Faker.core.template.Template

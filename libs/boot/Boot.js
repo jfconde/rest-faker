@@ -1,8 +1,6 @@
-//  ___     _
-// | __|_ _| |_____ _ _
-// | _/ _` | / / -_) '_|
-// |_|\__,_|_\_\___|_|  v0.1
-// -------------------------
+/**
+ * Faker - libs/boot/Boot.js
+ */
 
 // Require Node modules
 var fs = require('fs');                 // Filesystem
